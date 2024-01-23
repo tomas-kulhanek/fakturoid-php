@@ -1,6 +1,6 @@
 # Fakturoid PHP lib
 
-PHP library for [Fakturoid.cz](https://www.fakturoid.cz/). Please see [API](https://fakturoid.docs.apiary.io/) for more documentation.
+PHP library for [Fakturoid.cz](https://www.fakturoid.cz/). Please see [API](https://www.fakturoid.cz/api/v3) for more documentation.
 New account just for testing API and using separate user (created via "Nastavení > Uživatelé a oprávnění") for production usage is highly recommended.
 
 ![Tests](https://github.com/fakturoid/fakturoid-php/actions/workflows/tests.yml/badge.svg)
@@ -12,62 +12,142 @@ The recommended way to install is through Composer:
 composer require fakturoid/fakturoid-php
 ```
 
-Library requires PHP 5.3.0 (or later) and `ext-curl` and `ext-json` extensions.
+Library requires PHP 8.1 (or later) and `ext-curl` and `ext-json` extensions.
+
+## Authorization by OAuth 2.0 - Client Credentials Flow
+
+```php
+$fManager = new \Fakturoid\FakturoidManager(
+    new ClientInterface(), // PSR-18 client
+    '{fakturoid-company-slug}',
+    '{fakturoid-client-id}',
+    '{fakturoid-client-secret}',
+    'PHPlib <your@email.cz>'
+);
+$fManager->authClientCredentials();
+```
+
+
+## Authorization by OAuth 2.0 - Authorization Code Flow
+
+Authorization using OAuth takes place in several steps. We use data obtained from the developer portal as client ID and client secret (_Settings → Connect other apps → OAuth 2 for app developers_).
+
+First, we offer the user a URL address where he enters his login information. We obtain this using the following method:
+```php
+$fManager = new \Fakturoid\FakturoidManager(
+    new ClientInterface(), // PSR-18 client
+    '{fakturoid-company-slug}',
+    '{fakturoid-client-id}',
+    '{fakturoid-client-secret}',
+    'PHPlib <your@email.cz>'
+);
+echo '<a href="'.$fManager->getAuthenticationUrl().'">Link</a>';
+```
+After entering the login data, the user is redirected to the specified redirect URI and with the code with which we obtain his credentials. We process the code as follows:
+```php
+$fManager->requestCredentials($_GET['code']);
+```
+Credentials are now established in the object instance and we can send queries to the Fakturoid api. Credentials can be obtained in 2 ways. Obtaining credentials directly from the object:
+```php
+$credentials = $fManager->getCredentials();
+echo $credentials->toJson();
+```
+
+### Processing credentials using the credentials callback:
+The way callback works is that the library calls the callback function whenever the credentials are changed. This is useful because the token is automatically refreshed after its expiration.
+```php
+$fManager->setCredentialsCallback(new class implements \Fakturoid\Auth\CredentialCallback {
+    public function __invoke(?\Fakturoid\Auth\Credentials $credentials = null): void
+    {
+        // Save credentials to database or another storage
+    }
+});
+```
+### Upload credentials to the Fakturoid object
+```php
+$fManager = new \Fakturoid\FakturoidManager(
+    new ClientInterface(), // PSR-18 client
+    '{fakturoid-company-slug}',
+    '{fakturoid-client-id}',
+    '{fakturoid-client-secret}',
+    'PHPlib <your@email.cz>'
+);
+$fManager->getAuthProvider()->setCredentials($credentials);
+```
+
+### Switch account 
+```php
+
+$fManager = new \Fakturoid\FakturoidManager(
+    new ClientInterface(), // PSR-18 client
+    '{fakturoid-company-slug}',
+    '{fakturoid-client-id}',
+    '{fakturoid-client-secret}',
+    'PHPlib <your@email.cz>'
+);
+$fManager->authClientCredentials();
+$fManager->getSettingProvider()->getBankAccounts();
+
+// switch account and company    
+$fManager->switchCompany('{fakturoid-company-slug-another}', null);
+$fManager->authClientCredentials();
+$fManager->getSettingProvider()->getBankAccounts();
+```
+
 
 ## Usage
 
 ```php
-require_once '/path/to/lib/Fakturoid.php';
-$f = new Fakturoid\Client('..slug..', '..user@email.cz..', '..api_key..', 'PHPlib <your@email.cz>');
-
+require __DIR__ . '/vendor/autoload.php';
+$fManager = new \Fakturoid\FakturoidManager(
+    new ClientInterface(), // PSR-18 client
+    '{fakturoid-company-slug}',
+    '{fakturoid-client-id}',
+    '{fakturoid-client-secret}',
+    'PHPlib <your@email.cz>'
+);
+$fManager->authClientCredentials();
 // create subject
-$response = $f->createSubject(array('name' => 'Firma s.r.o.', 'email' => 'aloha@pokus.cz'));
+$response = $fManager->getSubjectProvider()->create(['name' => 'Firma s.r.o.', 'email' => 'aloha@pokus.cz']);
 $subject  = $response->getBody();
 
 // create invoice with lines
-$lines    = array(array('name' => 'Big sale', 'quantity' => 1, 'unit_price' => 1000));
-$response = $f->createInvoice(array('subject_id' => $subject->id, 'lines' => $lines));
+$lines    = [['name' => 'Big sale', 'quantity' => 1, 'unit_price' => 1000]];
+$response = $fManager->getInvoiceProvider()->create(['subject_id' => $subject->id, 'lines' => $lines]);
 $invoice  = $response->getBody();
 
 // send created invoice
-$f->fireInvoice($invoice->id, 'deliver');
+$fManager->getInvoiceProvider->fireAction($invoice->id, 'deliver');
 
-// to mark invoice as paid
-$f->fireInvoice($invoice->id, 'pay'); // or 'pay_proforma' for paying proforma and 'pay_partial_proforma' for partial proforma
+// send by mail
+$fManager->getInvoiceProvider()->createMessage($invoice->id, ['email' => 'aloha@pokus.cz']);
 
-// you can also take advantage of caching (via ETag and Last-Modified headers).
-$response     = $f->getInvoice(123);
-$status       = $response->getStatusCode();            // 200
-$invoice      = $response->getBody();                  // stdClass Object
-$etag         = $response->getHeader('ETag');          // 'W/"6e0d839fb2edb9eadcd9ecda2d227c96"'
-$lastModified = $response->getHeader('Last-Modified'); // "Wed, 28 Mar 2018 03:11:14 GMT"
+// to mark invoice as paid and send thank you email
+$fManager->getInvoiceProvider()->createPayment($invoice->id, ['paid_on' => (new \DateTime())->format('Y-m-d'), 'send_thank_you_email' => true]);
 
-$response     = $f->getInvoice(123, array('If-None-Match' => $etag, 'If-Modified-Since' => $lastModified));
-$status       = $response->getStatusCode();            // 304 Not Modified
-$invoice      = $response->getBody();                  // null
 ```
 
 ## Downloading an invoice PDF
 
 ```php
 $invoiceId = 123;
-$response = $f->getInvoicePdf($invoiceId);
+$response = $fManager->getInvoiceProvider()->getPdf($invoiceId);
 $data = $response->getBody();
 file_put_contents("{$invoiceId}.pdf", $data);
 ```
 
-If you call `$f->getInvoicePdf()` right after creating an invoice, you'll get
+If you call `$fManager->getInvoiceProvider()->getPdf()` right after creating an invoice, you'll get
 a status code `204` (`No Content`) with empty body, this means the invoice PDF
 hasn't yet been generated and you should try again a second or two later.
 
-More info in [API docs](https://fakturoid.docs.apiary.io/#reference/invoices/invoice-pdf/stazeni-faktury-v-pdf).
+More info in [API docs](https://www.fakturoid.cz/api/v3/invoices#download-invoice-pdf).
 
 ```php
 $invoiceId = 123;
 
 // This is just an example, you may want to do this in a background job and be more defensive.
 while (true) {
-    $response = $f->getInvoicePdf($invoiceId);
+    $response = $fManager->getInvoiceProvider()->getPdf($invoiceId);
 
     if ($response->getStatusCode() == 200) {
         $data = $response->getBody();
@@ -85,7 +165,7 @@ You can use `custom_id` attribute to store your application record ID into our r
 Invoices and subjects can be filtered to find a particular record:
 
 ```php
-$response = $f->getSubjects(array('custom_id' => '10'));
+$response = $fManager->getSubjectProvider()->list(['custom_id' => '10']);
 $subjects = $response->getBody();
 $subject  = null;
 
@@ -102,70 +182,70 @@ Also note that the field always returns a string.
 To get all inventory items:
 
 ```php
-$f->getInventoryItems();
+$fManager->getInventoryItemsProvider()->list();
 ```
 
 To filter inventory items by certain SKU code or article number:
 
 ```php
-$f->getInventoryItems(array('sku' => 'SKU1234'));
-$f->getInventoryItems(array('article_number' => 'IAN321'));
+$fManager->getInventoryItemsProvider()->list(['sku' => 'SKU1234']);
+$fManager->getInventoryItemsProvider()->list(['article_number' => 'IAN321']);
 ```
 
 To search inventory items (searches in `name`, `article_number` and `sku`):
 
 ```php
-$f->searchInventoryItems(array('query' => 'Item name'));
+$fManager->getInventoryItemsProvider()->listArchived(['query' => 'Item name']);
 ```
 
 To get all archived inventory items:
 
 ```php
-$f->getArchivedInventoryItems();
+$fManager->getInventoryItemsProvider()->listArchived();
 ```
 
 To get a single inventory item:
 
 ```php
-$f->getInventoryItem($inventoryItemId);
+$fManager->getInventoryItemsProvider()->get($inventoryItemId);
 ```
 
 To create an inventory item:
 
 ```php
-$data = array(
+$data = [
     'name' => 'Item name',
     'sku' => 'SKU12345',
     'track_quantity' => true,
     'quantity' => 100,
     'native_purchase_price' => 500,
     'native_retail_price' => 1000
-);
-$f->createInventoryItem($data);
+];
+$fManager->getInventoryItemsProvider()->create($data)
 ```
 
 To update an inventory item:
 
 ```php
-$f->updateInventoryItem($inventoryItemId, array('name' => 'Another name'));
+$fManager->getInventoryItemsProvider()->update($inventoryItemId, ['name' => 'Another name']);
 ```
 
 To archive an inventory item:
 
 ```php
-$f->archiveInventoryItem($inventoryItemId);
+$fManager->getInventoryItemsProvider()->archive($inventoryItemId);
 ```
 
 To unarchive an inventory item:
 
 ```php
-$f->unarchiveInventoryItem($inventoryItemId);
+$fManager->getInventoryItemsProvider()->unArchive($inventoryItemId);
 ```
 
 To delete an inventory item:
 
 ```php
-$f->deleteInventoryItem($inventoryItemId);
+$fManager->getInventoryItemsProvider()->delete($inventoryItemId);
 ```
 
 ## InventoryMove resource
@@ -173,81 +253,81 @@ $f->deleteInventoryItem($inventoryItemId);
 To get get all inventory moves across all inventory items:
 
 ```php
-$f->getInventoryMoves();
+$fManager->getInventoryItemsProvider()->listMoves()
 ```
 
 To get inventory moves for a single inventory item:
 
 ```php
-$f->getInventoryMoves(array('inventory_item_id' => $inventoryItemId));
+$fManager->getInventoryItemsProvider()->listMoves(['inventory_item_id' => $inventoryItemId]);
 ```
 
 To get a single inventory move:
 
 ```php
-$f->getInventoryMove($inventoryItemId, $inventoryMoveId);
+$fManager->getInventoryItemsProvider()->getMove($inventoryItemId, $inventoryMoveId);
 ```
 
 To create a stock-in inventory move:
 
 ```php
-$f->createInventoryMove(
+$fManager->getInventoryItemsProvider()->createMove(
     $inventoryItemId,
-    array(
+    [
         'direction' => 'in',
         'moved_on' => '2023-01-12',
         'quantity_change' => 5,
         'purchase_price' => '249.99',
         'purchase_currency' => 'CZK',
         'private_note' => 'Bought with discount'
-    )
+    ]
 )
 ```
 
 To create a stock-out inventory move:
 
 ```php
-$f->createInventoryMove(
+$fManager->getInventoryItemsProvider()->createMove(
     $inventoryItemId,
-    array(
+    [
         'direction' => 'out',
         'moved_on' => '2023-01-12',
         'quantity_change' => '1.5',
         'retail_price' => 50,
         'retail_currency' => 'EUR',
         'native_retail_price' => '1250'
-    )
+    ]
 );
 ```
 
 To update an inventory move:
 
 ```php
-$f->updateInventoryMove($inventoryItemId, $inventoryMoveId, array('moved_on' => '2023-01-11'));
+$fManager->getInventoryItemsProvider()->updateMove($inventoryItemId, $inventoryMoveId, ['moved_on' => '2023-01-11']);
 ```
 
 To delete an inventory move:
 
 ```php
-$f->deleteInventoryMove($inventoryItemId, $inventoryMoveId);
+$fManager->getInventoryItemsProvider()->updateMove($inventoryItemId, $inventoryMoveId);
 ```
 
 ## Handling errors
 
-Library raises `Fakturoid\Exception` if server returns code `4xx` or `5xx`. You can get response code and response body by calling `getCode()` or `getMessage()`.
+Library raises `Fakturoid\Exception\BadResponseException` if server returns code `4xx` or `5xx`. You can get response code and response body by calling `getCode()` or `getResponse()->getBody()`.
 
 ```php
 try {
-    $subject = $f->createSubject(array('name' => '', 'email' => 'aloha@pokus.cz'));
-} catch (Fakturoid\Exception $e) {
+    $subject = $fManager->getSubjectProvider()->create(['name' => '', 'email' => 'aloha@pokus.cz']);
+} catch (\Fakturoid\Exception\BadResponseException $e) {
     $e->getCode(); // 422
-    $e->getMessage(); // '{"errors":{"name":["je povinná položka","je příliš krátký/á/é (min. 2 znaků)"]}}'
+    $e->getMessage(); // Unprocessable entity
+    $e->getResponse()->getBody(); // '{"errors":{"name":["je povinná položka","je příliš krátký/á/é (min. 2 znaků)"]}}'
 }
 ```
 
 ### Common problems
 
-- Ensure you have certificates for curl present - either globaly in `php.ini` or call `curl_setopt($ch, CURLOPT_CAINFO, "/path/to/cacert.pem")`.
 - In case of problem please contact our invoicing robot on podpora@fakturoid.cz.
 
 ## Development
@@ -256,21 +336,10 @@ try {
 - If you wish to generate code coverage (and have more intelligent stack traces), you will need [Xdebug](https://xdebug.org/)
   (`php-xdebug` package), it will hook itself into PHPUnit automatically.
 
-### macOS
-
-```sh
-$ brew install php
-$ brew install composer
-$ arch -arm64 pecl install xdebug # For Apple M1 chips
-# Reload terminal
-$ composer install
-```
-
-### Debian
-
-```sh
-$ sudo aptitude install php php-curl php-xml php-mbstring php-xdebug composer
-$ composer install
+### Docker
+```shell
+docker-compose up -d
+docker-compose exec php bash
 ```
 
 ### Testing
@@ -278,17 +347,36 @@ $ composer install
 Both commands do the same but the second version is a bit faster.
 
 ```sh
-$ composer test
-$ vendor/bin/phpunit
-$ XDEBUG_MODE=coverage composer test # Generates coverage
-$ XDEBUG_MODE=coverage vendor/bin/phpunit
+$ docker-compose exec php composer test:phpunit
+$ docker-compose exec php composer coverage:phpunit
+# or locally
+$ composer test:phpunit
+$ composer coverage:phpunit
 ```
 
 ### Code-Style Check
 
-Both commands do the same but the second version seems to have a more intelliget output.
+Both commands do the same but the second version seems to have a more intelligent output.
 
 ```sh
-$ composer lint
-$ vendor/bin/phpcs --standard=PSR2 lib
+$ docker-compose exec php composer check:cs
+# or locally
+$ composer check:cs
+```
+
+### Check all requires for PR
+
+```sh
+$ docker-compose exec php composer check:all
+# or locally
+$ composer check:all
+```
+
+Or you can fix CS and Rector issues automatically:
+
+
+```sh
+$ docker-compose exec php composer fix:all
+# or locally
+$ composer fix:all
 ```
