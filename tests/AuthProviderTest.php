@@ -23,6 +23,17 @@ class AuthProviderTest extends TestCase
         );
     }
 
+    public function testAuthenticationUrlWithoutState(): void
+    {
+        $requester = $this->createMock(ClientInterface::class);
+        $authProvider = new AuthProvider('clientId', 'clientSecret', 'redirectUri', $requester);
+
+        $this->assertEquals(
+            'https://app.fakturoid.cz/api/v3/oauth?client_id=clientId&redirect_uri=redirectUri&response_type=code',
+            $authProvider->getAuthenticationUrl()
+        );
+    }
+
     public function testAuthorizationCodeReAuthWithEmptyRefreshCode(): void
     {
         $requester = $this->createMock(ClientInterface::class);

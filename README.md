@@ -75,7 +75,8 @@ $fManager = new \Fakturoid\FakturoidManager(
 $fManager->getAuthProvider()->setCredentials($credentials);
 ```
 
-### Switch account 
+### Switch account
+
 ```php
 
 $fManager = new \Fakturoid\FakturoidManager(
@@ -86,12 +87,12 @@ $fManager = new \Fakturoid\FakturoidManager(
     'PHPlib <your@email.cz>'
 );
 $fManager->authClientCredentials();
-$fManager->getSettingProvider()->getBankAccounts();
+$fManager->getSettingProvider()->listBankAccounts();
 
 // switch account and company    
 $fManager->switchCompany('{fakturoid-company-slug-another}', null);
 $fManager->authClientCredentials();
-$fManager->getSettingProvider()->getBankAccounts();
+$fManager->getSettingProvider()->listBankAccounts();
 ```
 
 

@@ -9,7 +9,7 @@ abstract class Provider
      * @param array<string> $allowedKeys
      * @return array<string, mixed>
      */
-    protected function filterOptions(array $options, array $allowedKeys = [], bool $caseSensitive = true): array
+    protected function filterOptions(array $options, array $allowedKeys = []): array
     {
         if ($options === []) {
             return [];
@@ -18,11 +18,7 @@ abstract class Provider
         $unknownKeys = [];
 
         foreach ($options as $key => $value) {
-            if (!$caseSensitive) {
-                $key = strtolower($key);
-            }
-
-            if (!in_array($key, $allowedKeys)) {
+            if (!in_array(strtolower($key), $allowedKeys)) {
                 unset($options[$key]);
                 $unknownKeys[] = $key;
             }

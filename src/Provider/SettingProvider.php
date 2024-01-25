@@ -17,22 +17,22 @@ final class SettingProvider extends Provider
         return $this->dispatcher->get(sprintf('/users/%d.json', $id));
     }
 
-    public function getUsers(): Response
+    public function listUsers(): Response
     {
         return $this->dispatcher->get('/users.json');
     }
 
-    public function getAccount(): Response
+    public function listAccount(): Response
     {
         return $this->dispatcher->get('/account.json');
     }
 
-    public function getBankAccounts(): Response
+    public function listBankAccounts(): Response
     {
         return $this->dispatcher->get('/bank_accounts.json');
     }
 
-    public function getInvoiceNumberFormats(): Response
+    public function listInvoiceNumberFormats(): Response
     {
         return $this->dispatcher->get('/number_formats/invoices.json');
     }

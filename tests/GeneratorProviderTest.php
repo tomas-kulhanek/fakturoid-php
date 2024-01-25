@@ -170,5 +170,4 @@ class GeneratorProviderTest extends TestCase
         $response = $provider->createRecurring(['page' => 2]);
         $this->assertEquals(['page' => 2], $response->getBody(true));
     }
-
 }

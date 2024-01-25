@@ -15,7 +15,7 @@ class SettingProviderTest extends TestCase
 
         $id = 6;
         $dispatcher->expects($this->once())
-            ->method('get', $id)
+            ->method('get')
             ->with(sprintf('/users/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
