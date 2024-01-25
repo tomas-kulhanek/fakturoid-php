@@ -45,7 +45,7 @@ final class GeneratorProvider extends Provider
      */
     public function update(int $id, array $data = []): Response
     {
-        return $this->dispatcher->get(sprintf('/generators/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/generators/%d.json', $id), $data);
     }
 
     public function delete(int $id): Response
@@ -86,7 +86,7 @@ final class GeneratorProvider extends Provider
      */
     public function updateRecurring(int $id, array $data = []): Response
     {
-        return $this->dispatcher->get(sprintf('/recurring_generators/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/recurring_generators/%d.json', $id), $data);
     }
 
     public function deleteRecurring(int $id): Response
