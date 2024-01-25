@@ -195,7 +195,11 @@ class InvoiceProviderTest extends TestCase
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
-        $response = $provider->createMessage($id, []);
+        $response = $provider->createMessage($id, [
+            'email' => 'test@example.org',
+            'subject' => 'Hello',
+            'message' => "Hello,\n\nI have invoice for you.\n#link#\n\n   John Doe"
+        ]);
         $this->assertEquals(['page' => 2], $response->getBody(true));
     }
 
