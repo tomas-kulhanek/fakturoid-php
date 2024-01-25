@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     name: "Composer Check"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.minimal-php-version }}
@@ -44,7 +44,7 @@ jobs:
     needs: composer
     name: "Code style"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.minimal-php-version }}
@@ -61,7 +61,7 @@ jobs:
     needs: composer
     name: "Rector"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.minimal-php-version }}
@@ -83,7 +83,7 @@ jobs:
     name: "Check by PHP version"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
