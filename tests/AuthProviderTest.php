@@ -7,6 +7,7 @@ use Fakturoid\Auth\AuthProvider;
 use Fakturoid\Auth\Credentials;
 use Fakturoid\Enum\AuthTypeEnum;
 use Fakturoid\Exception\AuthorizationFailedException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -281,6 +282,42 @@ class AuthProviderTest extends TestCase
         $this->assertEquals('access_token', $credentials->getAccessToken());
         $this->assertEquals('refresh_token', $credentials->getRefreshToken());
         $this->assertEquals(AuthTypeEnum::AUTHORIZATION_CODE_FLOW, $credentials->getAuthType());
+    }
+
+    public function testAuthorizationInvalidResponse(): void
+    {
+        $responseInterface = $this->createMock(ResponseInterface::class);
+        $responseInterface
+            ->expects($this->once())
+            ->method('getBody')
+            ->willReturn(
+                $this->getStreamMock('')
+            );
+
+        $client = $this->createMock(ClientInterface::class);
+        $client
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->willReturn($responseInterface);
+        $authProvider = new AuthProvider('clientId', 'clientSecret', 'redirectUri', $client);
+        $this->expectException(AuthorizationFailedException::class);
+        $this->expectExceptionMessage('An error occurred while authorization code flow. Message: ');
+        $authProvider->requestCredentials('CODE');
+    }
+
+    public function testAuthorizationInvalidRespons2e(): void
+    {
+        $exception = new class ('test') extends \Exception implements ClientExceptionInterface{
+        };
+        $client = $this->createMock(ClientInterface::class);
+        $client
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->willThrowException($exception);
+        $authProvider = new AuthProvider('clientId', 'clientSecret', 'redirectUri', $client);
+        $this->expectException(AuthorizationFailedException::class);
+        $this->expectExceptionMessage('An error occurred while authorization code flow. Message: ');
+        $authProvider->requestCredentials('CODE');
     }
 
     public function testAuthorizationCode(): void
