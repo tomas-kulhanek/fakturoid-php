@@ -4,6 +4,8 @@ namespace Fakturoid\Auth;
 
 use Fakturoid\Enum\AuthTypeEnum;
 use Fakturoid\Exception\AuthorizationFailedException;
+use Fakturoid\Exception\ConnectionFailedException;
+use Fakturoid\Exception\InvalidDataException;
 use Fakturoid\Exception\InvalidResponseException;
 use JsonException;
 use Nyholm\Psr7\Request;
@@ -53,12 +55,30 @@ class AuthProvider
             throw new AuthorizationFailedException('Load authentication screen first.');
         }
 
-        /** @var array{'access_token': string, 'expires_in': int, 'refresh_token': string, 'token_type': string} $json */
-        $json = $this->curl([
-            'grant_type' => 'authorization_code',
-            'code' => $this->code,
-            'redirect_uri' => $this->redirectUri,
-        ]);
+        try {
+            /** @var array{'access_token': string, 'expires_in': int, 'refresh_token': string, 'token_type': string, 'error'?:string} $json */
+            $json = $this->curl([
+                'grant_type' => 'authorization_code',
+                'code' => $this->code,
+                'redirect_uri' => $this->redirectUri,
+            ]);
+        } catch (InvalidDataException | ConnectionFailedException $exception) {
+            throw new AuthorizationFailedException(
+                sprintf('An error occurred while authorization code flow. Message: %s', $exception->getMessage()),
+                $exception->getCode(),
+                $exception
+            );
+        }
+        if (!empty($json['error'])) {
+            throw new AuthorizationFailedException(
+                sprintf('An error occurred while authorization code flow. Message: %s', $json['error'])
+            );
+        }
+        if (empty($json['access_token']) || empty($json['expires_in'])) {
+            throw new AuthorizationFailedException(
+                'An error occurred while authorization code flow. Message: invalid response'
+            );
+        }
         $this->credentials = new Credentials(
             $json['refresh_token'],
             $json['access_token'],
@@ -77,21 +97,29 @@ class AuthProvider
     public function oauth2Refresh(): ?Credentials
     {
         if ($this->credentials !== null) {
-            $json = $this->curl([
-                'grant_type' => 'refresh_token',
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
-                'refresh_token' => $this->credentials->getRefreshToken(),
-                'redirect_uri' => $this->redirectUri,
-            ]);
+            try {
+                $json = $this->curl([
+                    'grant_type' => 'refresh_token',
+                    'client_id' => $this->clientId,
+                    'client_secret' => $this->clientSecret,
+                    'refresh_token' => $this->credentials->getRefreshToken(),
+                    'redirect_uri' => $this->redirectUri,
+                ]);
+            } catch (InvalidDataException | ConnectionFailedException $exception) {
+                throw new AuthorizationFailedException(
+                    sprintf('Error occurred while refreshing token. Message: %s', $exception->getMessage()),
+                    $exception->getCode(),
+                    $exception
+                );
+            }
             if (!empty($json['error'])) {
                 throw new AuthorizationFailedException(
-                    'Error occurred while refreshing token. Message: ' . $json['error']
+                    sprintf('Error occurred while refreshing token. Message: %s', $json['error'])
                 );
             }
             if (empty($json['access_token']) || empty($json['expires_in'])) {
                 throw new AuthorizationFailedException(
-                    'Error occurred while refreshing token. Message: Invalid response'
+                    'Error occurred while refreshing token. Message: invalid response'
                 );
             }
             $this->credentials = new Credentials(
@@ -137,13 +165,25 @@ class AuthProvider
      */
     private function clientCredentials(): ?Credentials
     {
-        $json = $this->curl([
-            'grant_type' => 'client_credentials',
-        ]);
-
+        try {
+            $json = $this->curl([
+                'grant_type' => 'client_credentials',
+            ]);
+        } catch (InvalidDataException | ConnectionFailedException $exception) {
+            throw new AuthorizationFailedException(
+                sprintf('An error occurred while client credentials flow. Message: %s', $exception->getMessage()),
+                $exception->getCode(),
+                $exception
+            );
+        }
+        if (!empty($json['error'])) {
+            throw new AuthorizationFailedException(
+                sprintf('An error occurred while client credentials flow. Message: %s', $json['error'])
+            );
+        }
         if (empty($json['access_token']) || empty($json['expires_in'])) {
             throw new AuthorizationFailedException(
-                'Error occurred while refreshing token. Message: Invalid response'
+                'An error occurred while client credentials flow. Message: invalid response'
             );
         }
         $this->credentials = new Credentials(
@@ -163,7 +203,7 @@ class AuthProvider
     /**
      * @param array<string, mixed> $body
      * @return array{'refresh_token'?: string|null, 'access_token': string, 'expires_in': int}|array{'error'?:string}
-     * @throws AuthorizationFailedException|InvalidResponseException
+     * @throws ConnectionFailedException|InvalidDataException
      */
     private function curl(array $body): array
     {
@@ -179,14 +219,16 @@ class AuthProvider
                 json_encode($body, JSON_THROW_ON_ERROR)
             );
             $response = $this->client->sendRequest($request);
-            $responseData = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-            if (!is_array($responseData)) {
-                throw new InvalidResponseException('Invalid response');
-            }
-            return $responseData;
-        } catch (ClientExceptionInterface | JsonException $exception) {
-            throw new AuthorizationFailedException(
-                sprintf('Error occurred while refreshing token. Message: %s', $exception->getMessage()),
+            return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (ClientExceptionInterface $exception) {
+            throw new ConnectionFailedException(
+                sprintf('Error occurred. Message: %s', $exception->getMessage()),
+                $exception->getCode(),
+                $exception
+            );
+        } catch (JsonException $exception) {
+            throw new InvalidDataException(
+                sprintf('Error occurred while decoding response. Message: %s', $exception->getMessage()),
                 $exception->getCode(),
                 $exception
             );

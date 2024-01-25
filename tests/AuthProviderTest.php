@@ -200,7 +200,7 @@ class AuthProviderTest extends TestCase
 
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $client);
         $this->expectException(AuthorizationFailedException::class);
-        $this->expectExceptionMessage('Error occurred while refreshing token. Message: Invalid response');
+        $this->expectExceptionMessage('Error occurred while refreshing token. Message: invalid response');
         $authProvider->setCredentials($credentials);
         $authProvider->reAuth();
     }
@@ -241,7 +241,7 @@ class AuthProviderTest extends TestCase
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $client);
 
         $this->expectException(AuthorizationFailedException::class);
-        $this->expectExceptionMessage('Error occurred while refreshing token. Message: Invalid response');
+        $this->expectExceptionMessage('An error occurred while client credentials flow. Message: invalid response');
         $authProvider->auth(AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW);
     }
 
