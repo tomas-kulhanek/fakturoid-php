@@ -12,7 +12,6 @@ final class InventoryItemProvider extends Provider
     ) {
     }
 
-
     /**
      * @param array{
      *  'since'?:string,

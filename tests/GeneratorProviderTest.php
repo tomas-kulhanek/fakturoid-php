@@ -86,13 +86,6 @@ class GeneratorProviderTest extends TestCase
         $this->assertEquals(['page' => 2], $response->getBody(true));
     }
 
-
-
-
-
-
-
-
     public function testListRecurring(): void
     {
         $dispatcher = $this->createMock(Dispatcher::class);

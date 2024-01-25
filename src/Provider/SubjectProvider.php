@@ -12,7 +12,6 @@ final class SubjectProvider extends Provider
     ) {
     }
 
-
     /**
      * @param array{'since'?:string, 'updated_since'?:string, 'page'?:int, 'custom_id'?:string} $params
      */

@@ -147,7 +147,6 @@ class InventoryItemProviderTest extends TestCase
         $this->assertEquals(['page' => 2], $response->getBody(true));
     }
 
-
     public function testUnArchive(): void
     {
         $dispatcher = $this->createMock(Dispatcher::class);
@@ -179,7 +178,6 @@ class InventoryItemProviderTest extends TestCase
         $this->assertEquals([], $response->getBody(true));
     }
 
-
     public function testGetMove(): void
     {
         $dispatcher = $this->createMock(Dispatcher::class);
@@ -196,7 +194,6 @@ class InventoryItemProviderTest extends TestCase
         $response = $provider->getMove($itemId, $moveId);
         $this->assertEquals([], $response->getBody(true));
     }
-
 
     public function testDeleteMove(): void
     {

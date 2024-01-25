@@ -12,7 +12,6 @@ final class InvoiceProvider extends Provider
     ) {
     }
 
-
     /**
      * @param array{
      * 'since'?:string,
@@ -55,7 +54,6 @@ final class InvoiceProvider extends Provider
             $this->filterOptions($params, ['query', 'page', 'tags'])
         );
     }
-
 
     public function get(int $id): Response
     {

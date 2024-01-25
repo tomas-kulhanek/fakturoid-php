@@ -150,6 +150,7 @@ class ExpenseProviderTest extends TestCase
         $response = $provider->getAttachment($id, $paymentId);
         $this->assertEquals(['page' => 2], $response->getBody(true));
     }
+
     public function testFireAction(): void
     {
         $dispatcher = $this->createMock(Dispatcher::class);

@@ -131,7 +131,6 @@ class BadResponseTest extends TestCase
         $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
     }
 
-
     public function test415(): void
     {
         $responseInterface = $this->createPsrResponseMock(415, 'application/json', '{"error":""}');
@@ -155,7 +154,6 @@ class BadResponseTest extends TestCase
         $this->expectExceptionCode(415);
         $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
     }
-
 
     public function test422(): void
     {
@@ -181,7 +179,6 @@ class BadResponseTest extends TestCase
         $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
     }
 
-
     public function test429(): void
     {
         $responseInterface = $this->createPsrResponseMock(429, 'application/json', '{"error":""}');
@@ -205,7 +202,6 @@ class BadResponseTest extends TestCase
         $this->expectExceptionCode(429);
         $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
     }
-
 
     public function testOtherClient(): void
     {
@@ -231,7 +227,6 @@ class BadResponseTest extends TestCase
         $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
     }
 
-
     public function testOtherServer(): void
     {
         $responseInterface = $this->createPsrResponseMock(599, 'application/json', '{"error":""}');
@@ -255,7 +250,6 @@ class BadResponseTest extends TestCase
         $this->expectExceptionCode(599);
         $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
     }
-
 
     public function test503(): void
     {

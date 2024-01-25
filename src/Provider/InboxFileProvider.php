@@ -12,7 +12,6 @@ final class InboxFileProvider extends Provider
     ) {
     }
 
-
     public function list(): Response
     {
         return $this->dispatcher->get('/inbox_files.json');

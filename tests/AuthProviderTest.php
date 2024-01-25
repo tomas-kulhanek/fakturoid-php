@@ -18,8 +18,10 @@ class AuthProviderTest extends TestCase
         $requester = $this->createMock(ClientInterface::class);
         $authProvider = new AuthProvider('clientId', 'clientSecret', 'redirectUri', $requester);
 
+        $baseUrl = 'https://app.fakturoid.cz/api/v3/oauth';
+        $expectedUrl = $baseUrl . '?client_id=clientId&redirect_uri=redirectUri&response_type=code&state=c';
         $this->assertEquals(
-            'https://app.fakturoid.cz/api/v3/oauth?client_id=clientId&redirect_uri=redirectUri&response_type=code&state=c',
+            $expectedUrl,
             $authProvider->getAuthenticationUrl('c')
         );
     }
@@ -92,7 +94,6 @@ class AuthProviderTest extends TestCase
             ->expects($this->once())
             ->method('isExpired')
             ->willReturn(true);
-
 
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $client);
         $authProvider->setCredentials($credentials);
@@ -168,7 +169,6 @@ class AuthProviderTest extends TestCase
         $authProvider->setCredentials($credentials);
         $authProvider->reAuth();
     }
-
 
     public function testClientCredentialReAuthWithoutResponse(): void
     {
@@ -246,7 +246,6 @@ class AuthProviderTest extends TestCase
         $authProvider->auth(AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW);
     }
 
-
     public function testAuthorizationCodeWithoutCode(): void
     {
         $client = $this->createMock(ClientInterface::class);
@@ -256,7 +255,6 @@ class AuthProviderTest extends TestCase
         $this->expectExceptionMessage('Load authentication screen first.');
         $authProvider->auth(AuthTypeEnum::AUTHORIZATION_CODE_FLOW);
     }
-
 
     public function testAuthorizationCodeSimple(): void
     {

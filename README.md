@@ -19,7 +19,7 @@ Library requires PHP 8.1 (or later) and `ext-curl` and `ext-json` extensions.
 ```php
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-company-slug}',
+    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
@@ -36,7 +36,7 @@ First, we offer the user a URL address where he enters his login information. We
 ```php
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-company-slug}',
+    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
@@ -67,7 +67,7 @@ $fManager->setCredentialsCallback(new class implements \Fakturoid\Auth\Credentia
 ```php
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-company-slug}',
+    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
@@ -81,7 +81,7 @@ $fManager->getAuthProvider()->setCredentials($credentials);
 
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-company-slug}',
+    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
@@ -90,7 +90,7 @@ $fManager->authClientCredentials();
 $fManager->getSettingProvider()->listBankAccounts();
 
 // switch account and company    
-$fManager->switchCompany('{fakturoid-company-slug-another}', null);
+$fManager->switchCompany('{fakturoid-account-slug-another}', null);
 $fManager->authClientCredentials();
 $fManager->getSettingProvider()->listBankAccounts();
 ```
@@ -102,7 +102,7 @@ $fManager->getSettingProvider()->listBankAccounts();
 require __DIR__ . '/vendor/autoload.php';
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-company-slug}',
+    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
@@ -315,16 +315,20 @@ $fManager->getInventoryItemsProvider()->updateMove($inventoryItemId, $inventoryM
 
 ## Handling errors
 
-Library raises `Fakturoid\Exception\BadResponseException` if server returns code `4xx` or `5xx`. You can get response code and response body by calling `getCode()` or `getResponse()->getBody()`.
+Library raises `Fakturoid\Exception\ClientErrorException` for `4xxx` and `Fakturoid\Exception\ServerErrorException` for `5xx` status. You can get response code and response body by calling `getCode()` or `getResponse()->getBody()`.
 
 ```php
 try {
     $subject = $fManager->getSubjectProvider()->create(['name' => '', 'email' => 'aloha@pokus.cz']);
-} catch (\Fakturoid\Exception\BadResponseException $e) {
+} catch (\Fakturoid\Exception\ClientErrorException $e) {
     $e->getCode(); // 422
     $e->getMessage(); // Unprocessable entity
     $e->getResponse()->getBody(); // '{"errors":{"name":["je povinná položka","je příliš krátký/á/é (min. 2 znaků)"]}}'
+} catch (\Fakturoid\Exception\ServerErrorException $e) {
+    $e->getCode(); // 503
+    $e->getMessage(); // Fakturoid is in read only state
 }
+
 ```
 
 ### Common problems

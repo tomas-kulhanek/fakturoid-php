@@ -12,7 +12,6 @@ final class EventProvider extends Provider
     ) {
     }
 
-
     /**
      * @param array{'subject_id'?: int, 'since'?: string, 'page'?: int} $params
      */

@@ -78,7 +78,6 @@ class SubjectProviderTest extends TestCase
         $this->assertEquals(['data' => 'test@fakturoid.cz'], $response->getBody(true));
     }
 
-
     public function testCreate(): void
     {
         $dispatcher = $this->createMock(Dispatcher::class);
@@ -115,7 +114,6 @@ class SubjectProviderTest extends TestCase
         $this->assertEquals(['data' => 'test@fakturoid.cz'], $response->getBody(true));
     }
 
-
     public function testUpdate(): void
     {
         $dispatcher = $this->createMock(Dispatcher::class);
@@ -135,7 +133,6 @@ class SubjectProviderTest extends TestCase
 
         $this->assertEquals($subjectData, $response->getBody(true));
     }
-
 
     public function testDelete(): void
     {

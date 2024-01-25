@@ -12,7 +12,6 @@ final class GeneratorProvider extends Provider
     ) {
     }
 
-
     /**
      * @param array{
      *  'since'?:string,
@@ -52,7 +51,6 @@ final class GeneratorProvider extends Provider
     {
         return $this->dispatcher->delete(sprintf('/generators/%d.json', $id));
     }
-
 
     /**
      * @param array{
