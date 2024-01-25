@@ -53,7 +53,7 @@ final class ExpenseProvider extends Provider
 
     public function fireAction(int $id, string $event): Response
     {
-        return $this->dispatcher->post('/expenses/$id/fire.json', ['event' => $event]);
+        return $this->dispatcher->post(sprintf('/expenses/%d/fire.json', $id), ['event' => $event]);
     }
 
     /**
