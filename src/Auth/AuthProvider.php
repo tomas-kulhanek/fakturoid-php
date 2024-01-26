@@ -82,11 +82,9 @@ class AuthProvider
         $this->credentials = new Credentials(
             $json['refresh_token'],
             $json['access_token'],
-            $json['expires_in'],
-            new \DateTimeImmutable(),
+            (new \DateTimeImmutable())->modify('+ ' . ($json['expires_in'] - 10) . ' seconds'),
             AuthTypeEnum::AUTHORIZATION_CODE_FLOW
         );
-        $this->credentials->addLastValidation(new \DateTimeImmutable());
         $this->callCredentialsCallback();
         return $this->credentials;
     }
@@ -125,11 +123,9 @@ class AuthProvider
             $this->credentials = new Credentials(
                 $json['refresh_token'] ?? null,
                 $json['access_token'],
-                $json['expires_in'],
-                new \DateTimeImmutable(),
+                (new \DateTimeImmutable())->modify('+ ' . ($json['expires_in'] - 10) . ' seconds'),
                 $this->credentials->getAuthType()
             );
-            $this->credentials->addLastValidation(new \DateTimeImmutable());
             $this->credentials->setAuthType(AuthTypeEnum::AUTHORIZATION_CODE_FLOW);
             $this->callCredentialsCallback();
             return $this->credentials;
@@ -189,11 +185,9 @@ class AuthProvider
         $this->credentials = new Credentials(
             $json['refresh_token'] ?? null,
             $json['access_token'],
-            $json['expires_in'],
-            new \DateTimeImmutable(),
+            (new \DateTimeImmutable())->modify('+ ' . ($json['expires_in'] - 10) . ' seconds'),
             AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW
         );
-        $this->credentials->addLastValidation(new \DateTimeImmutable());
         $this->credentials->setAuthType(AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW);
         $this->callCredentialsCallback();
 

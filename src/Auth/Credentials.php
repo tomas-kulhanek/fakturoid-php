@@ -3,6 +3,7 @@
 namespace Fakturoid\Auth;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use Fakturoid\Enum\AuthTypeEnum;
 use Fakturoid\Exception\InvalidDataException;
 use JsonException;
@@ -12,8 +13,7 @@ class Credentials
     public function __construct(
         private readonly ?string $refresh_token,
         private readonly ?string $access_token,
-        private readonly ?int $expires_in,
-        private DateTimeImmutable $lastValidation,
+        private readonly DateTimeImmutable $expireAt,
         private AuthTypeEnum $authType
     ) {
     }
@@ -30,7 +30,7 @@ class Credentials
 
     public function isExpired(): bool
     {
-        return (new DateTimeImmutable()) > $this->lastValidation->modify('+' . ($this->expires_in - 10) . ' seconds');
+        return (new DateTimeImmutable()) > $this->expireAt;
     }
 
     public function getAuthType(): AuthTypeEnum
@@ -43,6 +43,11 @@ class Credentials
         $this->authType = $type;
     }
 
+    public function getExpireAt(): DateTimeImmutable
+    {
+        return $this->expireAt;
+    }
+
     /**
      * @throws InvalidDataException
      */
@@ -52,18 +57,12 @@ class Credentials
             $json = json_encode([
                 'refresh_token' => $this->refresh_token,
                 'access_token' => $this->access_token,
-                'expires_in' => $this->expires_in,
-                'lastValidation' => $this->lastValidation->format(DateTimeImmutable::ATOM),
+                'expireAt' => $this->expireAt->format(DateTimeInterface::ATOM),
                 'authType' => $this->authType,
             ], JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new InvalidDataException('Failed to encode credentials to JSON', $exception->getCode(), $exception);
         }
         return $json;
-    }
-
-    public function addLastValidation(DateTimeImmutable $lastValidation): void
-    {
-        $this->lastValidation = $lastValidation;
     }
 }

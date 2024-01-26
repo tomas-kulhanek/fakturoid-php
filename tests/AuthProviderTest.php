@@ -3,6 +3,7 @@
 namespace Fakturoid\Tests;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use Fakturoid\Auth\AuthProvider;
 use Fakturoid\Auth\Credentials;
 use Fakturoid\Enum\AuthTypeEnum;
@@ -346,12 +347,11 @@ class AuthProviderTest extends TestCase
 
     public function testJsonCredentials(): void
     {
-        $lastValidation = new DateTimeImmutable();
+        $expireAt = (new DateTimeImmutable())->modify('+ 7200 seconds');
         $credentials = new Credentials(
             'refresh_token',
             'access_token',
-            7200,
-            $lastValidation,
+            $expireAt,
             AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW
         );
 
@@ -359,8 +359,7 @@ class AuthProviderTest extends TestCase
             json_encode([
                 'refresh_token' => 'refresh_token',
                 'access_token' => 'access_token',
-                'expires_in' => 7200,
-                'lastValidation' => $lastValidation->format(DateTimeImmutable::ATOM),
+                'expireAt' => $expireAt->format(DateTimeInterface::ATOM),
                 'authType' => AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW->value,
             ]),
             $credentials->toJson()
@@ -369,22 +368,20 @@ class AuthProviderTest extends TestCase
 
     public function testExpiration(): void
     {
-        $lastValidation = new DateTimeImmutable();
+        $expireAt = (new DateTimeImmutable())->modify('+ 7200 seconds');
         $credentials = new Credentials(
             'refresh_token',
             'access_token',
-            7200,
-            $lastValidation,
+            $expireAt,
             AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW
         );
         $this->assertFalse($credentials->isExpired());
 
-        $lastValidation = (new DateTimeImmutable())->modify('-10 seconds');
+        $expireAt = (new DateTimeImmutable())->modify('-10 seconds');
         $credentials = new Credentials(
             'refresh_token',
             'access_token',
-            5,
-            $lastValidation,
+            $expireAt,
             AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW
         );
 
