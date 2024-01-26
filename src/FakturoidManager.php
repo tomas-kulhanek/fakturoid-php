@@ -34,15 +34,15 @@ class FakturoidManager
 
     public function __construct(
         ClientInterface $client,
-        string $slug,
         string $clientId,
         string $clientSecret,
         string $userAgent,
+        ?string $accountSlug = null,
         ?string $redirectUri = null
     ) {
         $this->authProvider = new AuthProvider($clientId, $clientSecret, $redirectUri, $client);
 
-        $this->dispatcher = new Dispatcher($slug, $userAgent, $this->authProvider, $client);
+        $this->dispatcher = new Dispatcher($userAgent, $this->authProvider, $client, $accountSlug);
         $this->invoiceProvider = new InvoiceProvider($this->dispatcher);
         $this->subjectProvider = new SubjectProvider($this->dispatcher);
         $this->expensesProvider = new ExpenseProvider($this->dispatcher);
@@ -54,10 +54,9 @@ class FakturoidManager
         $this->todoProvider = new TodoProvider($this->dispatcher);
     }
 
-    public function switchCompany(string $companySlug, ?Credentials $credentials): void
+    public function setAccountSlug(string $companySlug): void
     {
-        $this->dispatcher->setCompanySlug($companySlug);
-        $this->authProvider->setCredentials($credentials);
+        $this->dispatcher->setAccountSlug($companySlug);
     }
 
     public function getAuthProvider(): AuthProvider

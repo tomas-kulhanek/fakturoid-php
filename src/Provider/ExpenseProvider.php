@@ -27,7 +27,7 @@ final class ExpenseProvider extends Provider
     public function list(array $params = []): Response
     {
         $allowed = ['since', 'updated_since', 'page', 'subject_id', 'custom_id', 'number', 'variable_symbol', 'status'];
-        return $this->dispatcher->get('/expenses.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get('/accounts/{accountSlug}/expenses.json', $this->filterOptions($params, $allowed));
     }
 
     /**
@@ -36,24 +36,36 @@ final class ExpenseProvider extends Provider
     public function search(array $params = []): Response
     {
         return $this->dispatcher->get(
-            '/expenses/search.json',
+            '/accounts/{accountSlug}/expenses/search.json',
             $this->filterOptions($params, ['query', 'page', 'tags'])
         );
     }
 
     public function get(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/expenses/%d.json', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/expenses/%d.json', $id));
     }
 
     public function getAttachment(int $expenseId, int $attachmentId): Response
     {
-        return $this->dispatcher->get(sprintf('/expenses/%d/attachments/%d/download', $expenseId, $attachmentId));
+        return $this->dispatcher->get(
+            sprintf(
+                '/accounts/{accountSlug}/expenses/%d/attachments/%d/download',
+                $expenseId,
+                $attachmentId
+            )
+        );
     }
 
     public function fireAction(int $id, string $event): Response
     {
-        return $this->dispatcher->post(sprintf('/expenses/%d/fire.json', $id), ['event' => $event]);
+        return $this->dispatcher->post(
+            sprintf(
+                '/accounts/{accountSlug}/expenses/%d/fire.json',
+                $id
+            ),
+            ['event' => $event]
+        );
     }
 
     /**
@@ -61,7 +73,7 @@ final class ExpenseProvider extends Provider
      */
     public function create(array $data): Response
     {
-        return $this->dispatcher->post('/expenses.json', $data);
+        return $this->dispatcher->post('/accounts/{accountSlug}/expenses.json', $data);
     }
 
     /**
@@ -69,12 +81,12 @@ final class ExpenseProvider extends Provider
      */
     public function update(int $id, array $data): Response
     {
-        return $this->dispatcher->patch(sprintf('/expenses/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/accounts/{accountSlug}/expenses/%d.json', $id), $data);
     }
 
     public function delete(int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/expenses/%d.json', $id));
+        return $this->dispatcher->delete(sprintf('/accounts/{accountSlug}/expenses/%d.json', $id));
     }
 
     /**
@@ -82,11 +94,17 @@ final class ExpenseProvider extends Provider
      */
     public function createPayment(int $expenseId, array $data): Response
     {
-        return $this->dispatcher->post(sprintf('/expenses/%d/payments.json', $expenseId), $data);
+        return $this->dispatcher->post(sprintf('/accounts/{accountSlug}/expenses/%d/payments.json', $expenseId), $data);
     }
 
     public function deletePayment(int $expenseId, int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/expenses/%d/payments/%d.json', $expenseId, $id));
+        return $this->dispatcher->delete(
+            sprintf(
+                '/accounts/{accountSlug}/expenses/%d/payments/%d.json',
+                $expenseId,
+                $id
+            )
+        );
     }
 }

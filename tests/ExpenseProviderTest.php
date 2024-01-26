@@ -15,7 +15,7 @@ class ExpenseProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/expenses.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/expenses.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -30,7 +30,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/expenses/search.json', ['page' => 2])
+            ->with('/accounts/{accountSlug}/expenses/search.json', ['page' => 2])
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -46,7 +46,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/expenses/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/expenses/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -62,7 +62,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/expenses/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/expenses/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -78,7 +78,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('patch')
-            ->with(sprintf('/expenses/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/expenses/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -93,7 +93,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with('/expenses.json')
+            ->with('/accounts/{accountSlug}/expenses.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -109,7 +109,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/expenses/%d/payments.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/expenses/%d/payments.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -126,7 +126,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/expenses/%d/payments/%d.json', $id, $paymentId))
+            ->with(sprintf('/accounts/{accountSlug}/expenses/%d/payments/%d.json', $id, $paymentId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -143,7 +143,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/expenses/%d/attachments/%d/download', $id, $paymentId))
+            ->with(sprintf('/accounts/{accountSlug}/expenses/%d/attachments/%d/download', $id, $paymentId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);
@@ -159,7 +159,7 @@ class ExpenseProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/expenses/%d/fire.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/expenses/%d/fire.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new ExpenseProvider($dispatcher);

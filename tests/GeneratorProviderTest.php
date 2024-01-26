@@ -15,7 +15,7 @@ class GeneratorProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/generators.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/generators.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -31,7 +31,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/generators/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/generators/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -47,7 +47,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/generators/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/generators/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -63,7 +63,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('patch')
-            ->with(sprintf('/generators/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/generators/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -78,7 +78,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with('/generators.json')
+            ->with('/accounts/{accountSlug}/generators.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -93,7 +93,7 @@ class GeneratorProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/recurring_generators.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/recurring_generators.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -109,7 +109,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/recurring_generators/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/recurring_generators/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -125,7 +125,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/recurring_generators/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/recurring_generators/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -141,7 +141,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('patch')
-            ->with(sprintf('/recurring_generators/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/recurring_generators/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);
@@ -156,7 +156,7 @@ class GeneratorProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with('/recurring_generators.json')
+            ->with('/accounts/{accountSlug}/recurring_generators.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new GeneratorProvider($dispatcher);

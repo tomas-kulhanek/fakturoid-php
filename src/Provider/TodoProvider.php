@@ -17,11 +17,19 @@ final class TodoProvider extends Provider
      */
     public function list(array $params = []): Response
     {
-        return $this->dispatcher->get('/todos.json', $this->filterOptions($params, ['since', 'page']));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/todos.json',
+            $this->filterOptions($params, ['since', 'page'])
+        );
     }
 
     public function getToggleCompletion(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/todos/%d/toggle_completion.json', $id));
+        return $this->dispatcher->get(
+            sprintf(
+                '/accounts/{accountSlug}/todos/%d/toggle_completion.json',
+                $id
+            )
+        );
     }
 }

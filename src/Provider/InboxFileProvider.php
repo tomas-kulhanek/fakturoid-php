@@ -14,7 +14,7 @@ final class InboxFileProvider extends Provider
 
     public function list(): Response
     {
-        return $this->dispatcher->get('/inbox_files.json');
+        return $this->dispatcher->get('/accounts/{accountSlug}/inbox_files.json');
     }
 
     /**
@@ -22,21 +22,21 @@ final class InboxFileProvider extends Provider
      */
     public function create(array $data): Response
     {
-        return $this->dispatcher->post('/inbox_files.json', $data);
+        return $this->dispatcher->post('/accounts/{accountSlug}/inbox_files.json', $data);
     }
 
     public function sendToOCR(int $id): Response
     {
-        return $this->dispatcher->post(sprintf('/inbox_files/%d/send_to_ocr.json', $id));
+        return $this->dispatcher->post(sprintf('/accounts/{accountSlug}/inbox_files/%d/send_to_ocr.json', $id));
     }
 
     public function download(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/inbox_files/%d/download', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/inbox_files/%d/download', $id));
     }
 
     public function delete(int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/inbox_files/%d.json', $id));
+        return $this->dispatcher->delete(sprintf('/accounts/{accountSlug}/inbox_files/%d.json', $id));
     }
 }

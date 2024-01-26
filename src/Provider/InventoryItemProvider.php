@@ -26,7 +26,10 @@ final class InventoryItemProvider extends Provider
     public function list(array $params = []): Response
     {
         $allowed = ['since', 'until', 'updated_since', 'updated_until', 'page', 'article_number', 'sku'];
-        return $this->dispatcher->get('/inventory_items.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/inventory_items.json',
+            $this->filterOptions($params, $allowed)
+        );
     }
 
     /**
@@ -43,7 +46,10 @@ final class InventoryItemProvider extends Provider
     public function listArchived(array $params = []): Response
     {
         $allowed = ['since', 'until', 'updated_since', 'updated_until', 'page', 'article_number', 'sku'];
-        return $this->dispatcher->get('/inventory_items/archived.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/inventory_items/archived.json',
+            $this->filterOptions($params, $allowed)
+        );
     }
 
     /**
@@ -51,7 +57,10 @@ final class InventoryItemProvider extends Provider
      */
     public function listLowQuantity(array $params = []): Response
     {
-        return $this->dispatcher->get('/inventory_items/low_quantity.json', $this->filterOptions($params, ['page']));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/inventory_items/low_quantity.json',
+            $this->filterOptions($params, ['page'])
+        );
     }
 
     /**
@@ -59,12 +68,15 @@ final class InventoryItemProvider extends Provider
      */
     public function search(array $params = []): Response
     {
-        return $this->dispatcher->get('/inventory_items/search.json', $this->filterOptions($params, ['query', 'page']));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/inventory_items/search.json',
+            $this->filterOptions($params, ['query', 'page'])
+        );
     }
 
     public function get(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/inventory_items/%d.json', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/inventory_items/%d.json', $id));
     }
 
     /**
@@ -72,7 +84,7 @@ final class InventoryItemProvider extends Provider
      */
     public function create(array $data): Response
     {
-        return $this->dispatcher->post('/inventory_items.json', $data);
+        return $this->dispatcher->post('/accounts/{accountSlug}/inventory_items.json', $data);
     }
 
     /**
@@ -80,22 +92,32 @@ final class InventoryItemProvider extends Provider
      */
     public function update(int $id, array $data): Response
     {
-        return $this->dispatcher->patch(sprintf('/inventory_items/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/accounts/{accountSlug}/inventory_items/%d.json', $id), $data);
     }
 
     public function delete(int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/inventory_items/%d.json', $id));
+        return $this->dispatcher->delete(sprintf('/accounts/{accountSlug}/inventory_items/%d.json', $id));
     }
 
     public function archive(int $id): Response
     {
-        return $this->dispatcher->post(sprintf('/inventory_items/%d/archive.json', $id));
+        return $this->dispatcher->post(
+            sprintf(
+                '/accounts/{accountSlug}/inventory_items/%d/archive.json',
+                $id
+            )
+        );
     }
 
     public function unArchive(int $id): Response
     {
-        return $this->dispatcher->post(sprintf('/inventory_items/%d/unarchive.json', $id));
+        return $this->dispatcher->post(
+            sprintf(
+                '/accounts/{accountSlug}/inventory_items/%d/unarchive.json',
+                $id
+            )
+        );
     }
 
     /**
@@ -111,13 +133,20 @@ final class InventoryItemProvider extends Provider
     public function listMoves(array $params = []): Response
     {
         $allowed = ['since', 'until', 'updated_since', 'updated_until', 'page', 'inventory_item_id'];
-        return $this->dispatcher->get('/inventory_moves.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/inventory_moves.json',
+            $this->filterOptions($params, $allowed)
+        );
     }
 
     public function getMove(int $inventoryItemId, int $moveId): Response
     {
         return $this->dispatcher->get(
-            sprintf('/inventory_items/%d/inventory_moves/%d.json', $inventoryItemId, $moveId)
+            sprintf(
+                '/accounts/{accountSlug}/inventory_items/%d/inventory_moves/%d.json',
+                $inventoryItemId,
+                $moveId
+            )
         );
     }
 
@@ -126,7 +155,10 @@ final class InventoryItemProvider extends Provider
      */
     public function createMove(int $inventoryItemId, array $data): Response
     {
-        return $this->dispatcher->post(sprintf('/inventory_items/%d/inventory_moves.json', $inventoryItemId), $data);
+        return $this->dispatcher->post(
+            sprintf('/accounts/{accountSlug}/inventory_items/%d/inventory_moves.json', $inventoryItemId),
+            $data
+        );
     }
 
     /**
@@ -135,7 +167,11 @@ final class InventoryItemProvider extends Provider
     public function updateMove(int $inventoryItemId, int $moveId, array $data): Response
     {
         return $this->dispatcher->patch(
-            sprintf('/inventory_items/%d/inventory_moves/%d.json', $inventoryItemId, $moveId),
+            sprintf(
+                '/accounts/{accountSlug}/inventory_items/%d/inventory_moves/%d.json',
+                $inventoryItemId,
+                $moveId
+            ),
             $data
         );
     }
@@ -143,7 +179,11 @@ final class InventoryItemProvider extends Provider
     public function deleteMove(int $inventoryItemId, int $moveId): Response
     {
         return $this->dispatcher->delete(
-            sprintf('/inventory_items/%d/inventory_moves/%d.json', $inventoryItemId, $moveId)
+            sprintf(
+                '/accounts/{accountSlug}/inventory_items/%d/inventory_moves/%d.json',
+                $inventoryItemId,
+                $moveId
+            )
         );
     }
 }

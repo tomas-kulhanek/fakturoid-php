@@ -15,7 +15,7 @@ class TodoProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/todos.json', [])
+            ->with('/accounts/{accountSlug}/todos.json', [])
             ->willReturn(new Response($responseInterface));
 
         $provider = new TodoProvider($dispatcher);
@@ -27,7 +27,7 @@ class TodoProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/todos.json', ['page' => 2])
+            ->with('/accounts/{accountSlug}/todos.json', ['page' => 2])
             ->willReturn(new Response($responseInterface));
 
         $provider = new TodoProvider($dispatcher);
@@ -43,7 +43,7 @@ class TodoProviderTest extends TestCase
         $id = 6;
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/todos/%d/toggle_completion.json', $id), [])
+            ->with(sprintf('/accounts/{accountSlug}/todos/%d/toggle_completion.json', $id), [])
             ->willReturn(new Response($responseInterface));
 
         $provider = new TodoProvider($dispatcher);

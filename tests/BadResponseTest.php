@@ -28,11 +28,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Record not found');
         $this->expectExceptionCode(404);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test400(): void
@@ -52,11 +53,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Page not found');
         $this->expectExceptionCode(400);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test401(): void
@@ -76,11 +78,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Unauthorized');
         $this->expectExceptionCode(401);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test402(): void
@@ -100,11 +103,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Payment required or account is blocked');
         $this->expectExceptionCode(402);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test403(): void
@@ -124,11 +128,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Forbidden');
         $this->expectExceptionCode(403);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test415(): void
@@ -148,11 +153,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Unsupported media type');
         $this->expectExceptionCode(415);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test422(): void
@@ -172,11 +178,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Unprocessable entity');
         $this->expectExceptionCode(422);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test429(): void
@@ -196,11 +203,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Too many requests');
         $this->expectExceptionCode(429);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function testOtherClient(): void
@@ -220,11 +228,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ClientErrorException::class);
         $this->expectExceptionMessage('Client error');
         $this->expectExceptionCode(499);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function testOtherServer(): void
@@ -244,11 +253,12 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ServerErrorException::class);
         $this->expectExceptionMessage('Server error');
         $this->expectExceptionCode(599);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 
     public function test503(): void
@@ -268,10 +278,11 @@ class BadResponseTest extends TestCase
             ->method('getCredentials')
             ->willReturn($credentials);
 
-        $dispatcher = new Dispatcher('companySlug', 'test', $authProvider, $client);
+        $dispatcher = new Dispatcher('test', $authProvider, $client);
+        $dispatcher->setAccountSlug('account-slug');
         $this->expectException(ServerErrorException::class);
         $this->expectExceptionMessage('Fakturoid is in read only state');
         $this->expectExceptionCode(503);
-        $dispatcher->patch('/invoices/1.json', ['name' => 'Test']);
+        $dispatcher->patch('/accounts/{accountSlug}/invoices/1.json', ['name' => 'Test']);
     }
 }

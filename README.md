@@ -19,7 +19,6 @@ Library requires PHP 8.1 (or later) and `ext-curl` and `ext-json` extensions.
 ```php
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
@@ -36,10 +35,11 @@ First, we offer the user a URL address where he enters his login information. We
 ```php
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
+    null,
+    '{your-redirect-uri}'
 );
 echo '<a href="'.$fManager->getAuthenticationUrl().'">Link</a>';
 ```
@@ -67,7 +67,6 @@ $fManager->setCredentialsCallback(new class implements \Fakturoid\Auth\Credentia
 ```php
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
@@ -90,8 +89,7 @@ $fManager->authClientCredentials();
 $fManager->getSettingProvider()->listBankAccounts();
 
 // switch account and company    
-$fManager->switchCompany('{fakturoid-account-slug-another}', null);
-$fManager->authClientCredentials();
+$fManager->setAccountSlug('{fakturoid-account-slug-another}');
 $fManager->getSettingProvider()->listBankAccounts();
 ```
 
@@ -102,12 +100,18 @@ $fManager->getSettingProvider()->listBankAccounts();
 require __DIR__ . '/vendor/autoload.php';
 $fManager = new \Fakturoid\FakturoidManager(
     new ClientInterface(), // PSR-18 client
-    '{fakturoid-account-slug}',
     '{fakturoid-client-id}',
     '{fakturoid-client-secret}',
     'PHPlib <your@email.cz>'
 );
 $fManager->authClientCredentials();
+
+// get current account
+$account = $fManager->getSettingProvider()->getCurrentUser();
+$fManager->setAccountSlug($account->getBody()->default_account);
+// or you can set account slug manually
+$fManager->setAccountSlug('{fakturoid-account-slug}');
+
 // create subject
 $response = $fManager->getSubjectProvider()->create(['name' => 'Firma s.r.o.', 'email' => 'aloha@pokus.cz']);
 $subject  = $response->getBody();

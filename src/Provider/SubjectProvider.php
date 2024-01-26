@@ -18,7 +18,7 @@ final class SubjectProvider extends Provider
     public function list(array $params = []): Response
     {
         $allowed = ['since', 'updated_since', 'page', 'custom_id'];
-        return $this->dispatcher->get('/subjects.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get('/accounts/{accountSlug}/subjects.json', $this->filterOptions($params, $allowed));
     }
 
     /**
@@ -26,12 +26,15 @@ final class SubjectProvider extends Provider
      */
     public function search(array $params = []): Response
     {
-        return $this->dispatcher->get('/subjects/search.json', $this->filterOptions($params, ['query', 'page']));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/subjects/search.json',
+            $this->filterOptions($params, ['query', 'page'])
+        );
     }
 
     public function get(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/subjects/%d.json', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/subjects/%d.json', $id));
     }
 
     /**
@@ -39,7 +42,7 @@ final class SubjectProvider extends Provider
      */
     public function create(array $data): Response
     {
-        return $this->dispatcher->post('/subjects.json', $data);
+        return $this->dispatcher->post('/accounts/{accountSlug}/subjects.json', $data);
     }
 
     /**
@@ -47,11 +50,11 @@ final class SubjectProvider extends Provider
      */
     public function update(int $id, array $data): Response
     {
-        return $this->dispatcher->patch(sprintf('/subjects/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/accounts/{accountSlug}/subjects/%d.json', $id), $data);
     }
 
     public function delete(int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/subjects/%d.json', $id));
+        return $this->dispatcher->delete(sprintf('/accounts/{accountSlug}/subjects/%d.json', $id));
     }
 }

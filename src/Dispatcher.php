@@ -17,19 +17,19 @@ use Psr\Http\Client\ClientInterface;
 
 class Dispatcher implements DispatcherInterface
 {
-    final public const URL = 'https://app.fakturoid.cz/api/v3/accounts/';
+    final public const URL = 'https://app.fakturoid.cz/api/v3/';
 
     public function __construct(
-        private string $companySlug,
         private readonly string $userAgent,
         private readonly AuthProvider $authorization,
-        private readonly ClientInterface $client
+        private readonly ClientInterface $client,
+        private ?string $accountSlug = null
     ) {
     }
 
-    public function setCompanySlug(string $companySlug): void
+    public function setAccountSlug(string $accountSlug): void
     {
-        $this->companySlug = $companySlug;
+        $this->accountSlug = $accountSlug;
     }
 
     /**
@@ -67,6 +67,9 @@ class Dispatcher implements DispatcherInterface
      */
     private function dispatch(string $path, array $options): Response
     {
+        if (str_contains($path, '{accountSlug}') && $this->accountSlug === null) {
+            throw new Exception('Account slug is not set. You must set it before calling this method.');
+        }
         $this->authorization->reAuth();
         if ($this->authorization->getCredentials() === null) {
             throw new AuthorizationFailedException('Credentials are null');
@@ -83,7 +86,7 @@ class Dispatcher implements DispatcherInterface
         try {
             $request = new Request(
                 $options['method'],
-                self::URL . $this->companySlug . $path,
+                str_replace('{accountSlug}', $this->accountSlug ?? '', self::URL . $path),
                 [
                     'User-Agent' => $this->userAgent,
                     'Content-Type' => 'application/json',

@@ -12,28 +12,28 @@ final class SettingProvider extends Provider
     ) {
     }
 
-    public function getUser(int $id): Response
+    public function getCurrentUser(): Response
     {
-        return $this->dispatcher->get(sprintf('/users/%d.json', $id));
+        return $this->dispatcher->get('/user.json');
     }
 
     public function listUsers(): Response
     {
-        return $this->dispatcher->get('/users.json');
+        return $this->dispatcher->get('/accounts/{accountSlug}/users.json');
     }
 
-    public function listAccount(): Response
+    public function getAccount(): Response
     {
-        return $this->dispatcher->get('/account.json');
+        return $this->dispatcher->get('/accounts/{accountSlug}/account.json');
     }
 
     public function listBankAccounts(): Response
     {
-        return $this->dispatcher->get('/bank_accounts.json');
+        return $this->dispatcher->get('/accounts/{accountSlug}/bank_accounts.json');
     }
 
     public function listInvoiceNumberFormats(): Response
     {
-        return $this->dispatcher->get('/number_formats/invoices.json');
+        return $this->dispatcher->get('/accounts/{accountSlug}/number_formats/invoices.json');
     }
 }

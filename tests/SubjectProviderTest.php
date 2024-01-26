@@ -15,7 +15,7 @@ class SubjectProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/subjects.json', [])
+            ->with('/accounts/{accountSlug}/subjects.json', [])
             ->willReturn(
                 new Response($responseInterface)
             );
@@ -29,7 +29,7 @@ class SubjectProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/subjects.json', ['page' => 2])
+            ->with('/accounts/{accountSlug}/subjects.json', ['page' => 2])
             ->willReturn(
                 new Response($responseInterface)
             );
@@ -49,7 +49,7 @@ class SubjectProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/subjects/search.json', $querySearch)
+            ->with('/accounts/{accountSlug}/subjects/search.json', $querySearch)
             ->willReturn(
                 new Response($responseInterface)
             );
@@ -67,7 +67,7 @@ class SubjectProviderTest extends TestCase
         $id = 6;
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/subjects/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/subjects/%d.json', $id))
             ->willReturn(
                 new Response($responseInterface)
             );
@@ -85,7 +85,7 @@ class SubjectProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', json_encode($subjectData));
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with('/subjects.json', $subjectData)
+            ->with('/accounts/{accountSlug}/subjects.json', $subjectData)
             ->willReturn(
                 new Response($responseInterface)
             );
@@ -123,7 +123,7 @@ class SubjectProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', json_encode($subjectData));
         $dispatcher->expects($this->once())
             ->method('patch')
-            ->with(sprintf('/subjects/%d.json', $id), $subjectData)
+            ->with(sprintf('/accounts/{accountSlug}/subjects/%d.json', $id), $subjectData)
             ->willReturn(
                 new Response($responseInterface)
             );
@@ -146,7 +146,7 @@ class SubjectProviderTest extends TestCase
         $id = 6;
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/subjects/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/subjects/%d.json', $id))
             ->willReturn(
                 new Response($responseInterface)
             );

@@ -18,7 +18,7 @@ final class EventProvider extends Provider
     public function list(array $params = []): Response
     {
         return $this->dispatcher->get(
-            '/events.json',
+            '/accounts/{accountSlug}/events.json',
             $this->filterOptions($params, ['subject_id', 'since', 'page'])
         );
     }
@@ -29,7 +29,7 @@ final class EventProvider extends Provider
     public function listPaid(array $params = []): Response
     {
         return $this->dispatcher->get(
-            '/events/paid.json',
+            '/accounts/{accountSlug}/events/paid.json',
             $this->filterOptions($params, ['subject_id', 'since', 'page'])
         );
     }

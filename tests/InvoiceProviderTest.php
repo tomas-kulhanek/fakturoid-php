@@ -15,7 +15,7 @@ class InvoiceProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/invoices.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/invoices.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -30,7 +30,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/invoices/search.json', ['page' => 2])
+            ->with('/accounts/{accountSlug}/invoices/search.json', ['page' => 2])
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -46,7 +46,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/invoices/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -62,7 +62,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/invoices/%d/download.pdf', $id))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d/download.pdf', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -78,7 +78,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/invoices/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -94,7 +94,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('patch')
-            ->with(sprintf('/invoices/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -109,7 +109,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with('/invoices.json')
+            ->with('/accounts/{accountSlug}/invoices.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -125,7 +125,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/invoices/%d/payments.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d/payments.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -142,7 +142,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/invoices/%d/payments/%d.json', $id, $paymentId))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d/payments/%d.json', $id, $paymentId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -159,7 +159,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/invoices/%d/attachments/%d/download', $id, $paymentId))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d/attachments/%d/download', $id, $paymentId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -175,7 +175,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/invoices/%d/fire.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d/fire.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -191,7 +191,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/invoices/%d/message.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d/message.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);
@@ -212,7 +212,7 @@ class InvoiceProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/invoices/%d/payments/%d/create_tax_document.json', $id, $paymentId))
+            ->with(sprintf('/accounts/{accountSlug}/invoices/%d/payments/%d/create_tax_document.json', $id, $paymentId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InvoiceProvider($dispatcher);

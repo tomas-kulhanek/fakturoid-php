@@ -15,7 +15,7 @@ class InboxFileProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/inbox_files.json')
+            ->with('/accounts/{accountSlug}/inbox_files.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new InboxFileProvider($dispatcher);
@@ -30,7 +30,7 @@ class InboxFileProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with('/inbox_files.json')
+            ->with('/accounts/{accountSlug}/inbox_files.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new InboxFileProvider($dispatcher);
@@ -46,7 +46,7 @@ class InboxFileProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/inbox_files/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inbox_files/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InboxFileProvider($dispatcher);
@@ -62,7 +62,7 @@ class InboxFileProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/inbox_files/%d/send_to_ocr.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inbox_files/%d/send_to_ocr.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InboxFileProvider($dispatcher);
@@ -78,7 +78,7 @@ class InboxFileProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/pdf', 'binary file');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/inbox_files/%d/download', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inbox_files/%d/download', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InboxFileProvider($dispatcher);

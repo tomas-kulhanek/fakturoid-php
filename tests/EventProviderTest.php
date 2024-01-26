@@ -15,7 +15,7 @@ class EventProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/events.json', [])
+            ->with('/accounts/{accountSlug}/events.json', [])
             ->willReturn(new Response($responseInterface));
 
         $provider = new EventProvider($dispatcher);
@@ -30,7 +30,7 @@ class EventProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/events/paid.json', ['page' => 2])
+            ->with('/accounts/{accountSlug}/events/paid.json', ['page' => 2])
             ->willReturn(new Response($responseInterface));
 
         $provider = new EventProvider($dispatcher);

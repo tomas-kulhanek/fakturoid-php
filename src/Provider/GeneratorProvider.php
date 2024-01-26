@@ -23,12 +23,15 @@ final class GeneratorProvider extends Provider
     public function list(array $params = []): Response
     {
         $allowed = ['since', 'updated_since', 'page', 'subject_id'];
-        return $this->dispatcher->get('/generators.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/generators.json',
+            $this->filterOptions($params, $allowed)
+        );
     }
 
     public function get(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/generators/%d.json', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/generators/%d.json', $id));
     }
 
     /**
@@ -36,7 +39,7 @@ final class GeneratorProvider extends Provider
      */
     public function create(array $data = []): Response
     {
-        return $this->dispatcher->post('/generators.json', $data);
+        return $this->dispatcher->post('/accounts/{accountSlug}/generators.json', $data);
     }
 
     /**
@@ -44,12 +47,12 @@ final class GeneratorProvider extends Provider
      */
     public function update(int $id, array $data = []): Response
     {
-        return $this->dispatcher->patch(sprintf('/generators/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/accounts/{accountSlug}/generators/%d.json', $id), $data);
     }
 
     public function delete(int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/generators/%d.json', $id));
+        return $this->dispatcher->delete(sprintf('/accounts/{accountSlug}/generators/%d.json', $id));
     }
 
     /**
@@ -63,12 +66,15 @@ final class GeneratorProvider extends Provider
     public function listRecurring(array $params = []): Response
     {
         $allowed = ['since', 'updated_since', 'page', 'subject_id'];
-        return $this->dispatcher->get('/recurring_generators.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/recurring_generators.json',
+            $this->filterOptions($params, $allowed)
+        );
     }
 
     public function getRecurring(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/recurring_generators/%d.json', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/recurring_generators/%d.json', $id));
     }
 
     /**
@@ -76,7 +82,7 @@ final class GeneratorProvider extends Provider
      */
     public function createRecurring(array $data = []): Response
     {
-        return $this->dispatcher->post('/recurring_generators.json', $data);
+        return $this->dispatcher->post('/accounts/{accountSlug}/recurring_generators.json', $data);
     }
 
     /**
@@ -84,11 +90,11 @@ final class GeneratorProvider extends Provider
      */
     public function updateRecurring(int $id, array $data = []): Response
     {
-        return $this->dispatcher->patch(sprintf('/recurring_generators/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/accounts/{accountSlug}/recurring_generators/%d.json', $id), $data);
     }
 
     public function deleteRecurring(int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/recurring_generators/%d.json', $id));
+        return $this->dispatcher->delete(sprintf('/accounts/{accountSlug}/recurring_generators/%d.json', $id));
     }
 }

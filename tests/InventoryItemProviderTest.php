@@ -15,7 +15,7 @@ class InventoryItemProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/inventory_items.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/inventory_items.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -30,7 +30,7 @@ class InventoryItemProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/inventory_items/archived.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/inventory_items/archived.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -45,7 +45,7 @@ class InventoryItemProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/inventory_items/low_quantity.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/inventory_items/low_quantity.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -60,7 +60,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/inventory_items/search.json', ['page' => 2])
+            ->with('/accounts/{accountSlug}/inventory_items/search.json', ['page' => 2])
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -76,7 +76,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/inventory_items/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -92,7 +92,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/inventory_items/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -108,7 +108,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('patch')
-            ->with(sprintf('/inventory_items/%d.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -123,7 +123,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with('/inventory_items.json')
+            ->with('/accounts/{accountSlug}/inventory_items.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -139,7 +139,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/inventory_items/%d/archive.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d/archive.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -155,7 +155,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/inventory_items/%d/unarchive.json', $id))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d/unarchive.json', $id))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -170,7 +170,7 @@ class InventoryItemProviderTest extends TestCase
 
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/inventory_moves.json', ['page' => 1])
+            ->with('/accounts/{accountSlug}/inventory_moves.json', ['page' => 1])
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -187,7 +187,7 @@ class InventoryItemProviderTest extends TestCase
         $moveId = 60;
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/inventory_items/%d/inventory_moves/%d.json', $itemId, $moveId))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d/inventory_moves/%d.json', $itemId, $moveId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -204,7 +204,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('delete')
-            ->with(sprintf('/inventory_items/%d/inventory_moves/%d.json', $itemId, $moveId))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d/inventory_moves/%d.json', $itemId, $moveId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -221,7 +221,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('patch')
-            ->with(sprintf('/inventory_items/%d/inventory_moves/%d.json', $itemId, $moveId))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d/inventory_moves/%d.json', $itemId, $moveId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);
@@ -237,7 +237,7 @@ class InventoryItemProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"page": 2}');
         $dispatcher->expects($this->once())
             ->method('post')
-            ->with(sprintf('/inventory_items/%d/inventory_moves.json', $itemId))
+            ->with(sprintf('/accounts/{accountSlug}/inventory_items/%d/inventory_moves.json', $itemId))
             ->willReturn(new Response($responseInterface));
 
         $provider = new InventoryItemProvider($dispatcher);

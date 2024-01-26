@@ -8,19 +8,18 @@ use Fakturoid\Response;
 
 class SettingProviderTest extends TestCase
 {
-    public function testGetUser(): void
+    public function testGetCurrentUser(): void
     {
         $dispatcher = $this->createMock(Dispatcher::class);
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '{"id": 2, "name": "John Doe"}');
 
-        $id = 6;
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with(sprintf('/users/%d.json', $id))
+            ->with('/user.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new SettingProvider($dispatcher);
-        $response = $provider->getUser($id);
+        $response = $provider->getCurrentUser();
         $this->assertEquals(['id' => 2, 'name' => 'John Doe'], $response->getBody(true));
     }
 
@@ -31,7 +30,7 @@ class SettingProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '[{"id": 2, "name": "John Doe"}]');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/users.json')
+            ->with('/accounts/{accountSlug}/users.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new SettingProvider($dispatcher);
@@ -46,11 +45,11 @@ class SettingProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '[{"id": 2, "name": "John Doe"}]');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/account.json')
+            ->with('/accounts/{accountSlug}/account.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new SettingProvider($dispatcher);
-        $response = $provider->listAccount();
+        $response = $provider->getAccount();
         $this->assertEquals([['id' => 2, 'name' => 'John Doe']], $response->getBody(true));
     }
 
@@ -61,7 +60,7 @@ class SettingProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '[{"id": 2, "name": "John Doe"}]');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/bank_accounts.json')
+            ->with('/accounts/{accountSlug}/bank_accounts.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new SettingProvider($dispatcher);
@@ -76,7 +75,7 @@ class SettingProviderTest extends TestCase
         $responseInterface = $this->createPsrResponseMock(200, 'application/json', '[{"id": 2, "name": "John Doe"}]');
         $dispatcher->expects($this->once())
             ->method('get')
-            ->with('/number_formats/invoices.json')
+            ->with('/accounts/{accountSlug}/number_formats/invoices.json')
             ->willReturn(new Response($responseInterface));
 
         $provider = new SettingProvider($dispatcher);

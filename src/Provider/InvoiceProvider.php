@@ -40,7 +40,10 @@ final class InvoiceProvider extends Provider
             'status',
             'document_type',
         ];
-        return $this->dispatcher->get('/invoices.json', $this->filterOptions($params, $allowed));
+        return $this->dispatcher->get(
+            '/accounts/{accountSlug}/invoices.json',
+            $this->filterOptions($params, $allowed)
+        );
     }
 
     /**
@@ -50,29 +53,41 @@ final class InvoiceProvider extends Provider
     public function search(array $params = []): Response
     {
         return $this->dispatcher->get(
-            '/invoices/search.json',
+            '/accounts/{accountSlug}/invoices/search.json',
             $this->filterOptions($params, ['query', 'page', 'tags'])
         );
     }
 
     public function get(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/invoices/%d.json', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/invoices/%d.json', $id));
     }
 
     public function getPdf(int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/invoices/%d/download.pdf', $id));
+        return $this->dispatcher->get(sprintf('/accounts/{accountSlug}/invoices/%d/download.pdf', $id));
     }
 
     public function getAttachment(int $invoiceId, int $id): Response
     {
-        return $this->dispatcher->get(sprintf('/invoices/%d/attachments/%d/download', $invoiceId, $id));
+        return $this->dispatcher->get(
+            sprintf(
+                '/accounts/{accountSlug}/invoices/%d/attachments/%d/download',
+                $invoiceId,
+                $id
+            )
+        );
     }
 
     public function fireAction(int $id, string $event): Response
     {
-        return $this->dispatcher->post(sprintf('/invoices/%d/fire.json', $id), ['event' => $event]);
+        return $this->dispatcher->post(
+            sprintf(
+                '/accounts/{accountSlug}/invoices/%d/fire.json',
+                $id
+            ),
+            ['event' => $event]
+        );
     }
 
     /**
@@ -80,7 +95,7 @@ final class InvoiceProvider extends Provider
      */
     public function create(array $data): Response
     {
-        return $this->dispatcher->post('/invoices.json', $data);
+        return $this->dispatcher->post('/accounts/{accountSlug}/invoices.json', $data);
     }
 
     /**
@@ -88,12 +103,12 @@ final class InvoiceProvider extends Provider
      */
     public function update(int $id, array $data): Response
     {
-        return $this->dispatcher->patch(sprintf('/invoices/%d.json', $id), $data);
+        return $this->dispatcher->patch(sprintf('/accounts/{accountSlug}/invoices/%d.json', $id), $data);
     }
 
     public function delete(int $id): Response
     {
-        return $this->dispatcher->delete(sprintf('/invoices/%d.json', $id));
+        return $this->dispatcher->delete(sprintf('/accounts/{accountSlug}/invoices/%d.json', $id));
     }
 
     /**
@@ -101,7 +116,13 @@ final class InvoiceProvider extends Provider
      */
     public function createPayment(int $invoiceId, array $data): Response
     {
-        return $this->dispatcher->post(sprintf('/invoices/%d/payments.json', $invoiceId), $data);
+        return $this->dispatcher->post(
+            sprintf(
+                '/accounts/{accountSlug}/invoices/%d/payments.json',
+                $invoiceId
+            ),
+            $data
+        );
     }
 
     /**
@@ -110,14 +131,24 @@ final class InvoiceProvider extends Provider
     public function createTaxDocument(int $invoiceId, int $paymentId, array $data): Response
     {
         return $this->dispatcher->post(
-            sprintf('/invoices/%d/payments/%d/create_tax_document.json', $invoiceId, $paymentId),
+            sprintf(
+                '/accounts/{accountSlug}/invoices/%d/payments/%d/create_tax_document.json',
+                $invoiceId,
+                $paymentId
+            ),
             $data
         );
     }
 
     public function deletePayment(int $invoiceId, int $paymentId): Response
     {
-        return $this->dispatcher->delete(sprintf('/invoices/%d/payments/%d.json', $invoiceId, $paymentId));
+        return $this->dispatcher->delete(
+            sprintf(
+                '/accounts/{accountSlug}/invoices/%d/payments/%d.json',
+                $invoiceId,
+                $paymentId
+            )
+        );
     }
 
     /**
@@ -125,6 +156,12 @@ final class InvoiceProvider extends Provider
      */
     public function createMessage(int $invoiceId, array $data): Response
     {
-        return $this->dispatcher->post(sprintf('/invoices/%d/message.json', $invoiceId), $data);
+        return $this->dispatcher->post(
+            sprintf(
+                '/accounts/{accountSlug}/invoices/%d/message.json',
+                $invoiceId
+            ),
+            $data
+        );
     }
 }
