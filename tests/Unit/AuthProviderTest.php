@@ -19,6 +19,7 @@ class AuthProviderTest extends UnitTestCase
     public function testAuthenticationUrl(): void
     {
         $requester = $this->createMock(ClientInterface::class);
+        $requester->expects($this->never())->method('sendRequest');
         $authProvider = new AuthProvider('clientId', 'clientSecret', 'redirectUri', $requester);
 
         $baseUrl = 'https://app.fakturoid.cz/api/v3/oauth';
@@ -32,6 +33,7 @@ class AuthProviderTest extends UnitTestCase
     public function testAuthenticationUrlWithoutState(): void
     {
         $requester = $this->createMock(ClientInterface::class);
+        $requester->expects($this->never())->method('sendRequest');
         $authProvider = new AuthProvider('clientId', 'clientSecret', 'redirectUri', $requester);
 
         $this->assertEquals(
@@ -43,13 +45,20 @@ class AuthProviderTest extends UnitTestCase
     public function testAuthorizationCodeReAuthWithEmptyRefreshCode(): void
     {
         $requester = $this->createMock(ClientInterface::class);
+        $requester->expects($this->never())->method('sendRequest');
 
         $credentials = $this->createMock(Credentials::class);
-        $credentials->method('getAuthType')
+        $credentials
+            ->expects($this->once())
+            ->method('getAuthType')
             ->willReturn(AuthTypeEnum::AUTHORIZATION_CODE_FLOW);
-        $credentials->method('getAccessToken')
+        $credentials
+            ->expects($this->once())
+            ->method('getAccessToken')
             ->willReturn('access_token');
-        $credentials->method('getRefreshToken')
+        $credentials
+            ->expects($this->once())
+            ->method('getRefreshToken')
             ->willReturn(null);
 
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $requester);
@@ -62,6 +71,7 @@ class AuthProviderTest extends UnitTestCase
     public function testEmptyCredentialsReAuth(): void
     {
         $requester = $this->createMock(ClientInterface::class);
+        $requester->expects($this->never())->method('sendRequest');
 
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $requester);
         $this->expectException(AuthorizationFailedException::class);
@@ -83,7 +93,9 @@ class AuthProviderTest extends UnitTestCase
             ->willReturn($responseInterface);
 
         $credentials = $this->createMock(Credentials::class);
-        $credentials->method('getAuthType')
+        $credentials
+            ->expects($this->exactly(2))
+            ->method('getAuthType')
             ->willReturn(AuthTypeEnum::AUTHORIZATION_CODE_FLOW);
         $credentials
             ->expects($this->once())
@@ -268,6 +280,7 @@ class AuthProviderTest extends UnitTestCase
     public function testAuthorizationCodeWithoutCode(): void
     {
         $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())->method('sendRequest');
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $client);
 
         $this->expectException(AuthorizationFailedException::class);
@@ -368,9 +381,12 @@ class AuthProviderTest extends UnitTestCase
     public function testRevokeClientCredentials(): void
     {
         $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())->method('sendRequest');
 
         $credentials = $this->createMock(Credentials::class);
-        $credentials->method('getAuthType')
+        $credentials
+            ->expects($this->once())
+            ->method('getAuthType')
             ->willReturn(AuthTypeEnum::CLIENT_CREDENTIALS_CODE_FLOW);
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $client);
 
@@ -383,6 +399,7 @@ class AuthProviderTest extends UnitTestCase
     public function testRevokeWithoutCredentials(): void
     {
         $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())->method('sendRequest');
         $authProvider = new AuthProvider('clientId', 'clientSecret', null, $client);
 
         $this->expectException(AuthorizationFailedException::class);

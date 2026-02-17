@@ -29,11 +29,10 @@
     "ext-mbstring": "*",
     "phpstan/phpstan": "^2.1",
     "phpstan/phpstan-phpunit": "^2.0",
-    "phpunit/phpunit": "^11.4",
+    "phpunit/phpunit": "^12.5",
     "rector/rector": "^2.3",
     "squizlabs/php_codesniffer": "^3.10",
-    "guzzlehttp/guzzle": "^7.9",
-    "symfony/dotenv": "^7.4"
+    "guzzlehttp/guzzle": "^7.9"
   },
   "suggest": {
     "guzzlehttp/guzzle": "for usage with guzzle",
